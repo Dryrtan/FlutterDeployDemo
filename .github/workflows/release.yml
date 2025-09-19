@@ -19,11 +19,13 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
+          cache: 'gradle'
 
       - name: 🐦 Configurar Flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.35.4' 
+          cache: true
 
       - name: 📦 Instalar dependências
         run: flutter pub get
