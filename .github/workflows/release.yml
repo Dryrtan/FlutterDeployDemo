@@ -1,0 +1,51 @@
+name: 📱 Compilar Aplicativo Flutter
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🛒 Checkout do código
+        uses: actions/checkout@v5
+
+      - name: ☕ Configurar JDK 17
+        uses: actions/setup-java@v2
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: 🐦 Configurar Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.4' 
+
+      - name: 📦 Instalar dependências
+        run: flutter pub get
+
+      - name: 🏗️ Compilar APK
+        run: flutter build apk --release
+
+      # Upload do APK no artifact
+      # - name: 📤 Enviar APK
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: release-apk
+      #     path: build/app/outputs/flutter-apk/app-release.apk
+
+      - name: 🚀 Deploy via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./build/app/outputs/flutter-apk/
+          server-dir: ./ftp2/Dev/
+          exclude: |
+            **/*
+            !app-release.apk
