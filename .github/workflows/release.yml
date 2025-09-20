@@ -1,9 +1,6 @@
 name: 📱 Compilar e Distribuir Aplicativo
 
 on:
-  push:
-    branches:
-      - main
   workflow_dispatch:
 
 jobs:
@@ -69,48 +66,48 @@ jobs:
             **/*
             !app-release.aab
 
-  # build-ios:
-  #   name: Build iOS (IPA)
-  #   runs-on: macos-latest
-  #   steps:
-  #     - name: 🛒 Checkout do código
-  #       uses: actions/checkout@v5
+  build-ios:
+    name: Build iOS (IPA)
+    runs-on: macos-latest
+    steps:
+      - name: 🛒 Checkout do código
+        uses: actions/checkout@v5
 
-  #     # NOTA: Você precisa configurar os segredos abaixo no seu repositório GitHub
-  #     # para a assinatura de código do iOS funcionar.
-  #     # P12_BASE64: Seu certificado .p12 codificado em base64.
-  #     # P12_PASSWORD: A senha para o seu certificado.
-  #     # PROVISIONING_PROFILE_BASE64: Seu perfil de provisionamento .mobileprovision codificado em base64.
-  #     - name: 🔐 Instalar Certificados e Perfil de Provisionamento
-  #       uses: apple-actions/import-codesign-certs@v3
-  #       with:
-  #         p12-file-base64: ${{ secrets.P12_BASE64 }}
-  #         p12-password: ${{ secrets.P12_PASSWORD }}
-  #         provisioning-profiles-base64: ${{ secrets.PROVISIONING_PROFILE_BASE64 }}
+      # NOTA: Você precisa configurar os segredos abaixo no seu repositório GitHub
+      # para a assinatura de código do iOS funcionar.
+      # P12_BASE64: Seu certificado .p12 codificado em base64.
+      # P12_PASSWORD: A senha para o seu certificado.
+      # PROVISIONING_PROFILE_BASE64: Seu perfil de provisionamento .mobileprovision codificado em base64.
+      - name: 🔐 Instalar Certificados e Perfil de Provisionamento
+        uses: apple-actions/import-codesign-certs@v3
+        with:
+          p12-file-base64: ${{ secrets.P12_BASE64 }}
+          p12-password: ${{ secrets.P12_PASSWORD }}
+          provisioning-profiles-base64: ${{ secrets.PROVISIONING_PROFILE_BASE64 }}
 
-  #     - name: 🐦 Configurar Flutter
-  #       uses: subosito/flutter-action@v2
-  #       with:
-  #         flutter-version: '3.35.4'
-  #         cache: true
+      - name: 🐦 Configurar Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.4'
+          cache: true
 
-  #     - name: 📦 Instalar dependências
-  #       run: flutter pub get
+      - name: 📦 Instalar dependências
+        run: flutter pub get
 
-  #     - name: 🏗️ Compilar IPA
-  #       run: flutter build ipa --release --export-options-plist=ios/ExportOptions.plist
+      - name: 🏗️ Compilar IPA
+        run: flutter build ipa --release --export-options-plist=ios/ExportOptions.plist
 
-  #     - name: 📤 Enviar Artefato iOS
-  #       uses: actions/upload-artifact@v4
-  #       with:
-  #         name: ios-build
-  #         path: build/ios/ipa/*.ipa
+      - name: 📤 Enviar Artefato iOS
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-build
+          path: build/ios/ipa/*.ipa
 
-  #     - name: 🚀 Deploy iOS via FTP
-  #       uses: SamKirkland/FTP-Deploy-Action@v4.3.6
-  #       with:
-  #         server: ${{ secrets.FTP_SERVER }}
-  #         username: ${{ secrets.FTP_USERNAME }}
-  #         password: ${{ secrets.FTP_PASSWORD }}
-  #         local-dir: ./build/ios/ipa/
-  #         server-dir: ./ftp2/Dev/
+      - name: 🚀 Deploy iOS via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.6
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./build/ios/ipa/
+          server-dir: ./ftp2/Dev/
